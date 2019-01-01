@@ -23,6 +23,7 @@
     "dependencies": {
         "esprima": "^4.0.0",
         "jquery": "^3.3.1",
+        "js2flowchart": "^1.1.7",
         "tslint": "^5.11.0",
         "typescript": "^3.1.6"
     },
