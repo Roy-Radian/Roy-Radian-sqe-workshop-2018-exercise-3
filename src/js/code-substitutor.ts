@@ -76,8 +76,9 @@ export interface VarTuple {
 
 export const isVarParam = (id: Identifier, varTable: VarTuple[]): boolean =>
     //varTable.length == 0 ? false :
-    varTable[0].name == id.name ? varTable[0].isParam :
-    isVarParam(id, varTable.slice(1));
+    //varTable[0].name == id.name ? varTable[0].isParam :
+    //isVarParam(id, varTable.slice(1));
+    true;
 
 const paramToValueTuple = (param: string): VarTuple =>
     ({name: param.trim().split('=')[0].trim(), value: parseCode(param.trim().split('=')[1].trim()).body[0].expression, isParam: true});
@@ -87,7 +88,7 @@ const parseParams = (paramsTxt: string): VarTuple[] =>
 
 const valueExpressionToValue = (v: ValueExpression, varTable: VarTuple[]): Value =>
     isLiteral(v) ? getValueOfLiteral(v, varTable) :
-    isIdentifier(v) ? valueExpressionToValue(getValueExpressionOfIdentifier(v, varTable), varTable) :
+    isIdentifier(v) ? v.name ://valueExpressionToValue(getValueExpressionOfIdentifier(v, varTable), varTable) : // We do not want to substitute in graph
     isComputationExpression(v) ? getValueOfComputationExpression(v, varTable) :
     isConditionalExpression(v) ? getValueOfConditionalExpression(v, varTable) :
     getValOfMemberExpression(v, varTable);
@@ -101,8 +102,9 @@ const getValueOfArrayExpression = (arr: ArrayExpression, varTable: VarTuple[]): 
 
 export const getValueExpressionOfIdentifier = (id: Identifier, varTable: VarTuple[]): ValueExpression =>
     //varTable.length == 0 ? null :
-    varTable[0].name == id.name ? varTable[0].value :
-    getValueExpressionOfIdentifier(id, varTable.slice(1));
+    //varTable[0].name == id.name ? varTable[0].value : We do not want to substitute in the graph
+    //getValueExpressionOfIdentifier(id, varTable.slice(1));
+    id;
 
 const getValueOfComputationExpression = (comp: ComputationExpression, varTable: VarTuple[]): Value =>
     isBinaryExpression(comp) ? getValueOfBinaryExpression(comp, varTable) :

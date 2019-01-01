@@ -9,8 +9,9 @@ var isString = function (x) { return (typeof x) === "string"; };
 var isBoolean = function (x) { return (typeof x) === "boolean"; };
 exports.isVarParam = function (id, varTable) {
     //varTable.length == 0 ? false :
-    return varTable[0].name == id.name ? varTable[0].isParam :
-        exports.isVarParam(id, varTable.slice(1));
+    //varTable[0].name == id.name ? varTable[0].isParam :
+    //isVarParam(id, varTable.slice(1));
+    return true;
 };
 var paramToValueTuple = function (param) {
     return ({ name: param.trim().split('=')[0].trim(), value: code_analyzer_1.parseCode(param.trim().split('=')[1].trim()).body[0].expression, isParam: true });
@@ -21,7 +22,7 @@ var parseParams = function (paramsTxt) {
 exports.parseParams = parseParams;
 var valueExpressionToValue = function (v, varTable) {
     return Expression_Types_1.isLiteral(v) ? getValueOfLiteral(v, varTable) :
-        Expression_Types_1.isIdentifier(v) ? valueExpressionToValue(exports.getValueExpressionOfIdentifier(v, varTable), varTable) :
+        Expression_Types_1.isIdentifier(v) ? v.name : //valueExpressionToValue(getValueExpressionOfIdentifier(v, varTable), varTable) : // We do not want to substitute in graph
             Expression_Types_1.isComputationExpression(v) ? getValueOfComputationExpression(v, varTable) :
                 Expression_Types_1.isConditionalExpression(v) ? getValueOfConditionalExpression(v, varTable) :
                     getValOfMemberExpression(v, varTable);
@@ -35,8 +36,9 @@ var getValueOfArrayExpression = function (arr, varTable) {
 };
 exports.getValueExpressionOfIdentifier = function (id, varTable) {
     //varTable.length == 0 ? null :
-    return varTable[0].name == id.name ? varTable[0].value :
-        exports.getValueExpressionOfIdentifier(id, varTable.slice(1));
+    //varTable[0].name == id.name ? varTable[0].value : We do not want to substitute in the graph
+    //getValueExpressionOfIdentifier(id, varTable.slice(1));
+    return id;
 };
 var getValueOfComputationExpression = function (comp, varTable) {
     return Expression_Types_1.isBinaryExpression(comp) ? getValueOfBinaryExpression(comp, varTable) :
