@@ -27,16 +27,25 @@ const analyzedLinesIntoTable = (entries: AnalyzedLine[]): string =>
 
 
 const specialLines = ['ReturnStatement', 'BreakStatement', 'DoWhileEnd', 'BlockClosing', 'Else'];
-const atomicTypes = ['VariableDeclaration', 'AssignmentExpression'].concat(specialLines);
+const atomicTypes = ['VariableDeclarator', 'AssignmentExpression'].concat(specialLines);
 //const loopTypes = ['WhileStatement', 'DoWhileStatement', 'ForStatement'];
 const computationTypes = ['BinaryExpression', 'UnaryExpresion', 'UpdateExpression'];
 const valueTypes = ['Literal', 'Identifier', 'MemberExpression', 'ConditionalExpression'].concat(computationTypes);
 //const compoundTypes = ['FunctionDeclaration', 'IfStatement'].concat(valueTypes).concat(loopTypes);
 
-const constructSubstitution = (program: any, params: string): string => {
-    ident = 0;
+const constructSubstitution = (program: any, params: string): { subProg: ValuedLine[], valuedLines: string } => {
+    if (isProgram(program)) {
+        let parsedParams = parseParams(params);
+        let subProg = substituteProgram(program, parsedParams);
+        let paramList = paramsIntoList(parsedParams);
+        let valuedLines = valuedLinesIntoTable(subProg, paramList);
+        return { subProg: subProg, valuedLines: valuedLines };
+    } else {
+        return { subProg: [], valuedLines: notAProgram};
+    }
+    /*
     return isProgram(program) ? valuedLinesIntoTable(substituteProgram(program, parseParams(params)), paramsIntoList(parseParams(params))) :
-        notAProgram;
+        notAProgram; */
 }
 
 const paramsIntoList = (params: VarTuple[]): string[] =>
@@ -51,8 +60,7 @@ const valuedLineToHtml = (line: ValuedLine, params: string[]): string =>
     generateIdenttation() + valuedCompoundToHtml(line, params)) + "<br/>";
 
 const valuedAtomicToHtml = (line: ValuedLine): string =>
-    line.analyzedLine.type === 'VariableDeclaration' ? generateIdenttation() + valuedDeclarationToHtml(line) :
-    line.analyzedLine.type === 'VariableDeclaration' ? generateIdenttation() + valuedDeclarationToHtml(line) :
+    line.analyzedLine.type === 'VariableDeclarator' ? generateIdenttation() + valuedDeclarationToHtml(line) :
     line.analyzedLine.type === 'AssignmentExpression' ? generateIdenttation() +  valuedAssignmentToHtml(line) :
     specialLineToHtml(line);
 

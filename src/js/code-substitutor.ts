@@ -251,10 +251,10 @@ const doWhileEndLine = (cond: string, value: Value): ValuedLine => ({
     value: value
 });
 
-const elseLine = {
+const getElseLine = (): ValuedLine => ({
     analyzedLine: {line: -1, type: "Else", name: '', condition: '', value: ''},
     value: 0
-};
+});
 
 const copyArr = <T>(arr: T[]): T[] => JSON.parse(JSON.stringify(arr));
 
@@ -360,7 +360,7 @@ const getValuedLinesOfBody = (body: Body, varTable: VarTuple[]): ValuedLine[] =>
 
 const substituteIfStatement = (ifStatement: IfStatement, varTable: VarTuple[]): ValuedLine[] =>
     ifStatement.alternate != null ? [analyzedLineToValuedLine(ifStatement, valueExpressionToValue(ifStatement.test, varTable), varTable)].concat(getValuedLinesOfBody(ifStatement.consequent, varTable))
-        .concat([elseLine]).concat(getValuedLinesOfBody(ifStatement.alternate, varTable)) :
+        .concat([getElseLine()]).concat(getValuedLinesOfBody(ifStatement.alternate, varTable)) :
     [analyzedLineToValuedLine(ifStatement, valueExpressionToValue(ifStatement.test, varTable), varTable)].concat(getValuedLinesOfBody(ifStatement.consequent, varTable));
 
 const substituteLoopStatement = (loopStatement: LoopStatement, varTable: VarTuple[]): ValuedLine[] =>
@@ -389,7 +389,8 @@ const substituteVariableDeclaration = (varDeclaration: VariableDeclaration, varT
     for (let i = 0; i < varDeclaration.declarations.length; i++) {
         updateVarTable(varTable, varDeclaration.declarations[i].id, (varDeclaration.declarations[i].init == null ? createAtomicLiteralExpression(0) : varDeclaration.declarations[i].init));
     }
-    return NO_LINES;
+    return [analyzedLineToValuedLine(varDeclaration, 0, varTable)];
+    //return NO_LINES;
 }
 
 const substituteAssignmentExpression = (assignmentExpression: AssignmentExpression, varTable: VarTuple[]): ValuedLine[] => // Mutation due to changing varTable
@@ -408,7 +409,9 @@ const substituteIdentifierAssignment = (assignmentExpression: AssignmentExpressi
     //if (!isUpdateExpression(right)) {
         let newValue: ValueExpression = replaceVarInValueExpression(left, right, varTable);
         updateVarTable(varTable, left, newValue);
-        return (isVarParam(left, varTable) ? [analyzedLineToValuedLine(assignmentExpression, 0, varTable)] : NO_LINES);
+        //return (isVarParam(left, varTable) ? [analyzedLineToValuedLine(assignmentExpression, 0, varTable)] : NO_LINES);
+        // We do not substitute for the graph
+        return [analyzedLineToValuedLine(assignmentExpression, 0, varTable)];
     //}
     //return NO_LINES;
 }
