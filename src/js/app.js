@@ -10,7 +10,8 @@ $(document).ready(function () {
         let parsedCode = parseCode(codeToParse);
         let params = $('#params').val();
 
-        let res = constructSubstitution(parsedCode, params);
+        let res = constructSubstitution(parsedCode, params, false);
+        console.log(res.valuedLines);
         if (res.subProg != null) {
             graphCode(res);
         }

@@ -33,10 +33,10 @@ const computationTypes = ['BinaryExpression', 'UnaryExpresion', 'UpdateExpressio
 const valueTypes = ['Literal', 'Identifier', 'MemberExpression', 'ConditionalExpression'].concat(computationTypes);
 //const compoundTypes = ['FunctionDeclaration', 'IfStatement'].concat(valueTypes).concat(loopTypes);
 
-const constructSubstitution = (program: any, params: string): { subProg: ValuedLine[], valuedLines: string } => {
+const constructSubstitution = (program: any, params: string, substitute: Boolean = true): { subProg: ValuedLine[], valuedLines: string } => {
     if (isProgram(program)) {
         let parsedParams = parseParams(params);
-        let subProg = substituteProgram(program, parsedParams);
+        let subProg = substituteProgram(program, parsedParams, substitute);
         let paramList = paramsIntoList(parsedParams);
         let valuedLines = valuedLinesIntoTable(subProg, paramList);
         return { subProg: subProg, valuedLines: valuedLines };

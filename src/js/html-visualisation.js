@@ -32,10 +32,11 @@ var atomicTypes = ['VariableDeclarator', 'AssignmentExpression'].concat(specialL
 var computationTypes = ['BinaryExpression', 'UnaryExpresion', 'UpdateExpression'];
 var valueTypes = ['Literal', 'Identifier', 'MemberExpression', 'ConditionalExpression'].concat(computationTypes);
 //const compoundTypes = ['FunctionDeclaration', 'IfStatement'].concat(valueTypes).concat(loopTypes);
-var constructSubstitution = function (program, params) {
+var constructSubstitution = function (program, params, substitute) {
+    if (substitute === void 0) { substitute = true; }
     if (expression_analyzer_1.isProgram(program)) {
         var parsedParams = code_substitutor_1.parseParams(params);
-        var subProg = code_substitutor_1.substituteProgram(program, parsedParams);
+        var subProg = code_substitutor_1.substituteProgram(program, parsedParams, substitute);
         var paramList = paramsIntoList(parsedParams);
         var valuedLines = valuedLinesIntoTable(subProg, paramList);
         return { subProg: subProg, valuedLines: valuedLines };

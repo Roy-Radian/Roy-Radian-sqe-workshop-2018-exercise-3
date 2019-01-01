@@ -89,7 +89,7 @@ export const getValOfValExp = (v: ValueExpression, varTable: VarTuple[]): string
     getValOfMemberExpression(v, varTable);
 
 const getValOfIdentifier = (id: Identifier, varTable: VarTuple[]): string =>
-    (varTable.length == 0 || isVarParam(id, varTable) ? id.name : getValOfValExp(getValueExpressionOfIdentifier(id, varTable, varTable.length > 0), varTable));
+    (varTable.length == 0 || isVarParam(id, varTable, varTable.length > 0) ? id.name : getValOfValExp(getValueExpressionOfIdentifier(id, varTable, varTable.length > 0), varTable));
 
 const getValOfLiteral = (literal: Literal, varTable: VarTuple[]): string =>
     isAtomicLiteral(literal) ? literal.raw :
