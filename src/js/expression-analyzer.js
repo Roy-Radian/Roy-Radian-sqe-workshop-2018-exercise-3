@@ -50,7 +50,7 @@ exports.getValOfValExp = function (v, varTable) {
                     getValOfMemberExpression(v, varTable);
 };
 var getValOfIdentifier = function (id, varTable) {
-    return (varTable.length == 0 || code_substitutor_1.isVarParam(id, varTable) ? id.name : exports.getValOfValExp(code_substitutor_1.getValueExpressionOfIdentifier(id, varTable), varTable));
+    return (varTable.length == 0 || code_substitutor_1.isVarParam(id, varTable) ? id.name : exports.getValOfValExp(code_substitutor_1.getValueExpressionOfIdentifier(id, varTable, varTable.length > 0), varTable));
 };
 var getValOfLiteral = function (literal, varTable) {
     return Expression_Types_1.isAtomicLiteral(literal) ? literal.raw :
