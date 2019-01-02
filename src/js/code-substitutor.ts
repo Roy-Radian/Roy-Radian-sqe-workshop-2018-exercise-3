@@ -76,10 +76,12 @@ export interface VarTuple {
 
 export const isVarParam = (id: Identifier, varTable: VarTuple[], substitute: Boolean): boolean =>
     //varTable.length == 0 ? false :
-    substitute ? (
+    varTable[0].name == id.name ? varTable[0].isParam :
+    isVarParam(id, varTable.slice(1), substitute);
+    /*substitute ? (
         varTable[0].name == id.name ? varTable[0].isParam :
             isVarParam(id, varTable.slice(1), substitute)) :
-        true;
+        true;*/
 
 const paramToValueTuple = (param: string): VarTuple =>
     ({name: param.trim().split('=')[0].trim(), value: parseCode(param.trim().split('=')[1].trim()).body[0].expression, isParam: true});
@@ -107,9 +109,11 @@ const getValueOfArrayExpression = (arr: ArrayExpression, varTable: VarTuple[]): 
 
 export const getValueExpressionOfIdentifier = (id: Identifier, varTable: VarTuple[], substitute: Boolean): ValueExpression =>
     //varTable.length == 0 ? null :
-    substitute ? (varTable[0].name == id.name ? varTable[0].value :
+    varTable[0].name == id.name ? varTable[0].value :
+    getValueExpressionOfIdentifier(id, varTable.slice(1), substitute);
+    /*substitute ? (varTable[0].name == id.name ? varTable[0].value :
         getValueExpressionOfIdentifier(id, varTable.slice(1), substitute)) :
-    id;
+    id;*/
 
 const getValueOfComputationExpression = (comp: ComputationExpression, varTable: VarTuple[]): Value =>
     isBinaryExpression(comp) ? getValueOfBinaryExpression(comp, varTable) :
@@ -379,7 +383,7 @@ const substituteWhileStatement = (whileStatement: WhileStatement, varTable: VarT
     [analyzedLineToValuedLine(whileStatement, valueExpressionToValue(whileStatement.test, varTable), varTable, substitute)].concat(getValuedLinesOfBody(whileStatement.body, varTable, substitute));
 
 const substituteDoWhileStatement = (doWhileStatement: DoWhileStatement, varTable: VarTuple[], substitute: Boolean): ValuedLine[] =>
-    [analyzedLineToValuedLine(doWhileStatement, valueExpressionToValue(doWhileStatement.test, varTable), varTable, substitute)].concat(getValuedLinesOfBody(doWhileStatement.body, varTable, substitute)).concat(getDoWhileEndLine(getValOfValExp(doWhileStatement.test, substitute ? varTable : []), valueExpressionToValue(doWhileStatement.test, varTable)));
+    [analyzedLineToValuedLine(doWhileStatement, valueExpressionToValue(doWhileStatement.test, varTable), varTable, substitute)].concat(getValuedLinesOfBody(doWhileStatement.body, varTable, substitute)).concat(getDoWhileEndLine(getValOfValExp(doWhileStatement.test, varTable), valueExpressionToValue(doWhileStatement.test, varTable)));
 
 const getDoWhileEndLine = (cond: string, value: Value): ValuedLine[] =>
     [doWhileEndLine(cond, value)];

@@ -9,10 +9,13 @@ var isString = function (x) { return (typeof x) === 'string'; };
 var isBoolean = function (x) { return (typeof x) === 'boolean'; };
 exports.isVarParam = function (id, varTable, substitute) {
     //varTable.length == 0 ? false :
-    return substitute ? (varTable[0].name == id.name ? varTable[0].isParam :
-        exports.isVarParam(id, varTable.slice(1), substitute)) :
-        true;
+    return varTable[0].name == id.name ? varTable[0].isParam :
+        exports.isVarParam(id, varTable.slice(1), substitute);
 };
+/*substitute ? (
+    varTable[0].name == id.name ? varTable[0].isParam :
+        isVarParam(id, varTable.slice(1), substitute)) :
+    true;*/
 var paramToValueTuple = function (param) {
     return ({ name: param.trim().split('=')[0].trim(), value: code_analyzer_1.parseCode(param.trim().split('=')[1].trim()).body[0].expression, isParam: true });
 };
@@ -40,10 +43,12 @@ var getValueOfArrayExpression = function (arr, varTable) {
 };
 exports.getValueExpressionOfIdentifier = function (id, varTable, substitute) {
     //varTable.length == 0 ? null :
-    return substitute ? (varTable[0].name == id.name ? varTable[0].value :
-        exports.getValueExpressionOfIdentifier(id, varTable.slice(1), substitute)) :
-        id;
+    return varTable[0].name == id.name ? varTable[0].value :
+        exports.getValueExpressionOfIdentifier(id, varTable.slice(1), substitute);
 };
+/*substitute ? (varTable[0].name == id.name ? varTable[0].value :
+    getValueExpressionOfIdentifier(id, varTable.slice(1), substitute)) :
+id;*/
 var getValueOfComputationExpression = function (comp, varTable) {
     return Expression_Types_1.isBinaryExpression(comp) ? getValueOfBinaryExpression(comp, varTable) :
         Expression_Types_1.isLogicalExpression(comp) ? getValueOfLogicalExpression(comp, varTable) :
@@ -290,7 +295,7 @@ var substituteWhileStatement = function (whileStatement, varTable, substitute) {
     return [analyzedLineToValuedLine(whileStatement, valueExpressionToValue(whileStatement.test, varTable), varTable, substitute)].concat(getValuedLinesOfBody(whileStatement.body, varTable, substitute));
 };
 var substituteDoWhileStatement = function (doWhileStatement, varTable, substitute) {
-    return [analyzedLineToValuedLine(doWhileStatement, valueExpressionToValue(doWhileStatement.test, varTable), varTable, substitute)].concat(getValuedLinesOfBody(doWhileStatement.body, varTable, substitute)).concat(getDoWhileEndLine(expression_analyzer_1.getValOfValExp(doWhileStatement.test, substitute ? varTable : []), valueExpressionToValue(doWhileStatement.test, varTable)));
+    return [analyzedLineToValuedLine(doWhileStatement, valueExpressionToValue(doWhileStatement.test, varTable), varTable, substitute)].concat(getValuedLinesOfBody(doWhileStatement.body, varTable, substitute)).concat(getDoWhileEndLine(expression_analyzer_1.getValOfValExp(doWhileStatement.test, varTable), valueExpressionToValue(doWhileStatement.test, varTable)));
 };
 var getDoWhileEndLine = function (cond, value) {
     return [doWhileEndLine(cond, value)];

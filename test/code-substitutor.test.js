@@ -10,6 +10,14 @@ function testSubstitution(program, params, expectedSubstitution) {
         assert.fail();
 }
 
+function testWithoutSubstitution(program, params, expectedOutout){
+    if (isProgram(program)) {
+        assert.deepEqual(substituteProgram(program, parseParams(params), false), expectedOutout);
+    }
+    else
+        assert.fail();
+}
+
 /* CODE:
 params: *NONE*
  */
@@ -678,5 +686,84 @@ const errorTestingValuedLines = [
 describe('Testing error handling', function () {
     it('should produce error values', function () {
         testSubstitution(errorTestingProgram, errorTestingParams, errorTestingValuedLines);
+    });
+});
+
+/* CODE:
+function foo(x, y, z){
+    let a = x + 1;
+    let b = a + y;
+    let c = 0;
+
+    if (b < z) {
+        c = c + 5;
+    } else if (b < z * 2) {
+        c = c + x + 5;
+    } else {
+        c = c + z + 5;
+    }
+
+    return c;
+}
+params: x=1;y=2;z=3
+ */
+const nonSubstitutionProgram = { 'type': 'Program', 'body': [ { 'type': 'FunctionDeclaration', 'id': { 'type': 'Identifier', 'name': 'foo', 'loc': { 'start': { 'line': 1, 'column': 9 }, 'end': { 'line': 1, 'column': 12 } } }, 'params': [ { 'type': 'Identifier', 'name': 'x', 'loc': { 'start': { 'line': 1, 'column': 13 }, 'end': { 'line': 1, 'column': 14 } } }, { 'type': 'Identifier', 'name': 'y', 'loc': { 'start': { 'line': 1, 'column': 16 }, 'end': { 'line': 1, 'column': 17 } } }, { 'type': 'Identifier', 'name': 'z', 'loc': { 'start': { 'line': 1, 'column': 19 }, 'end': { 'line': 1, 'column': 20 } } } ], 'body': { 'type': 'BlockStatement', 'body': [ { 'type': 'VariableDeclaration', 'declarations': [ { 'type': 'VariableDeclarator', 'id': { 'type': 'Identifier', 'name': 'a', 'loc': { 'start': { 'line': 2, 'column': 8 }, 'end': { 'line': 2, 'column': 9 } } }, 'init': { 'type': 'BinaryExpression', 'operator': '+', 'left': { 'type': 'Identifier', 'name': 'x', 'loc': { 'start': { 'line': 2, 'column': 12 }, 'end': { 'line': 2, 'column': 13 } } }, 'right': { 'type': 'Literal', 'value': 1, 'raw': '1', 'loc': { 'start': { 'line': 2, 'column': 16 }, 'end': { 'line': 2, 'column': 17 } } }, 'loc': { 'start': { 'line': 2, 'column': 12 }, 'end': { 'line': 2, 'column': 17 } } }, 'loc': { 'start': { 'line': 2, 'column': 8 }, 'end': { 'line': 2, 'column': 17 } } } ], 'kind': 'let', 'loc': { 'start': { 'line': 2, 'column': 4 }, 'end': { 'line': 2, 'column': 18 } } }, { 'type': 'VariableDeclaration', 'declarations': [ { 'type': 'VariableDeclarator', 'id': { 'type': 'Identifier', 'name': 'b', 'loc': { 'start': { 'line': 3, 'column': 8 }, 'end': { 'line': 3, 'column': 9 } } }, 'init': { 'type': 'BinaryExpression', 'operator': '+', 'left': { 'type': 'Identifier', 'name': 'a', 'loc': { 'start': { 'line': 3, 'column': 12 }, 'end': { 'line': 3, 'column': 13 } } }, 'right': { 'type': 'Identifier', 'name': 'y', 'loc': { 'start': { 'line': 3, 'column': 16 }, 'end': { 'line': 3, 'column': 17 } } }, 'loc': { 'start': { 'line': 3, 'column': 12 }, 'end': { 'line': 3, 'column': 17 } } }, 'loc': { 'start': { 'line': 3, 'column': 8 }, 'end': { 'line': 3, 'column': 17 } } } ], 'kind': 'let', 'loc': { 'start': { 'line': 3, 'column': 4 }, 'end': { 'line': 3, 'column': 18 } } }, { 'type': 'VariableDeclaration', 'declarations': [ { 'type': 'VariableDeclarator', 'id': { 'type': 'Identifier', 'name': 'c', 'loc': { 'start': { 'line': 4, 'column': 8 }, 'end': { 'line': 4, 'column': 9 } } }, 'init': { 'type': 'Literal', 'value': 0, 'raw': '0', 'loc': { 'start': { 'line': 4, 'column': 12 }, 'end': { 'line': 4, 'column': 13 } } }, 'loc': { 'start': { 'line': 4, 'column': 8 }, 'end': { 'line': 4, 'column': 13 } } } ], 'kind': 'let', 'loc': { 'start': { 'line': 4, 'column': 4 }, 'end': { 'line': 4, 'column': 14 } } }, { 'type': 'IfStatement', 'test': { 'type': 'BinaryExpression', 'operator': '<', 'left': { 'type': 'Identifier', 'name': 'b', 'loc': { 'start': { 'line': 6, 'column': 8 }, 'end': { 'line': 6, 'column': 9 } } }, 'right': { 'type': 'Identifier', 'name': 'z', 'loc': { 'start': { 'line': 6, 'column': 12 }, 'end': { 'line': 6, 'column': 13 } } }, 'loc': { 'start': { 'line': 6, 'column': 8 }, 'end': { 'line': 6, 'column': 13 } } }, 'consequent': { 'type': 'BlockStatement', 'body': [ { 'type': 'ExpressionStatement', 'expression': { 'type': 'AssignmentExpression', 'operator': '=', 'left': { 'type': 'Identifier', 'name': 'c', 'loc': { 'start': { 'line': 7, 'column': 8 }, 'end': { 'line': 7, 'column': 9 } } }, 'right': { 'type': 'BinaryExpression', 'operator': '+', 'left': { 'type': 'Identifier', 'name': 'c', 'loc': { 'start': { 'line': 7, 'column': 12 }, 'end': { 'line': 7, 'column': 13 } } }, 'right': { 'type': 'Literal', 'value': 5, 'raw': '5', 'loc': { 'start': { 'line': 7, 'column': 16 }, 'end': { 'line': 7, 'column': 17 } } }, 'loc': { 'start': { 'line': 7, 'column': 12 }, 'end': { 'line': 7, 'column': 17 } } }, 'loc': { 'start': { 'line': 7, 'column': 8 }, 'end': { 'line': 7, 'column': 17 } } }, 'loc': { 'start': { 'line': 7, 'column': 8 }, 'end': { 'line': 7, 'column': 18 } } } ], 'loc': { 'start': { 'line': 6, 'column': 15 }, 'end': { 'line': 8, 'column': 5 } } }, 'alternate': { 'type': 'IfStatement', 'test': { 'type': 'BinaryExpression', 'operator': '<', 'left': { 'type': 'Identifier', 'name': 'b', 'loc': { 'start': { 'line': 8, 'column': 15 }, 'end': { 'line': 8, 'column': 16 } } }, 'right': { 'type': 'BinaryExpression', 'operator': '*', 'left': { 'type': 'Identifier', 'name': 'z', 'loc': { 'start': { 'line': 8, 'column': 19 }, 'end': { 'line': 8, 'column': 20 } } }, 'right': { 'type': 'Literal', 'value': 2, 'raw': '2', 'loc': { 'start': { 'line': 8, 'column': 23 }, 'end': { 'line': 8, 'column': 24 } } }, 'loc': { 'start': { 'line': 8, 'column': 19 }, 'end': { 'line': 8, 'column': 24 } } }, 'loc': { 'start': { 'line': 8, 'column': 15 }, 'end': { 'line': 8, 'column': 24 } } }, 'consequent': { 'type': 'BlockStatement', 'body': [ { 'type': 'ExpressionStatement', 'expression': { 'type': 'AssignmentExpression', 'operator': '=', 'left': { 'type': 'Identifier', 'name': 'c', 'loc': { 'start': { 'line': 9, 'column': 8 }, 'end': { 'line': 9, 'column': 9 } } }, 'right': { 'type': 'BinaryExpression', 'operator': '+', 'left': { 'type': 'BinaryExpression', 'operator': '+', 'left': { 'type': 'Identifier', 'name': 'c', 'loc': { 'start': { 'line': 9, 'column': 12 }, 'end': { 'line': 9, 'column': 13 } } }, 'right': { 'type': 'Identifier', 'name': 'x', 'loc': { 'start': { 'line': 9, 'column': 16 }, 'end': { 'line': 9, 'column': 17 } } }, 'loc': { 'start': { 'line': 9, 'column': 12 }, 'end': { 'line': 9, 'column': 17 } } }, 'right': { 'type': 'Literal', 'value': 5, 'raw': '5', 'loc': { 'start': { 'line': 9, 'column': 20 }, 'end': { 'line': 9, 'column': 21 } } }, 'loc': { 'start': { 'line': 9, 'column': 12 }, 'end': { 'line': 9, 'column': 21 } } }, 'loc': { 'start': { 'line': 9, 'column': 8 }, 'end': { 'line': 9, 'column': 21 } } }, 'loc': { 'start': { 'line': 9, 'column': 8 }, 'end': { 'line': 9, 'column': 22 } } } ], 'loc': { 'start': { 'line': 8, 'column': 26 }, 'end': { 'line': 10, 'column': 5 } } }, 'alternate': { 'type': 'BlockStatement', 'body': [ { 'type': 'ExpressionStatement', 'expression': { 'type': 'AssignmentExpression', 'operator': '=', 'left': { 'type': 'Identifier', 'name': 'c', 'loc': { 'start': { 'line': 11, 'column': 8 }, 'end': { 'line': 11, 'column': 9 } } }, 'right': { 'type': 'BinaryExpression', 'operator': '+', 'left': { 'type': 'BinaryExpression', 'operator': '+', 'left': { 'type': 'Identifier', 'name': 'c', 'loc': { 'start': { 'line': 11, 'column': 12 }, 'end': { 'line': 11, 'column': 13 } } }, 'right': { 'type': 'Identifier', 'name': 'z', 'loc': { 'start': { 'line': 11, 'column': 16 }, 'end': { 'line': 11, 'column': 17 } } }, 'loc': { 'start': { 'line': 11, 'column': 12 }, 'end': { 'line': 11, 'column': 17 } } }, 'right': { 'type': 'Literal', 'value': 5, 'raw': '5', 'loc': { 'start': { 'line': 11, 'column': 20 }, 'end': { 'line': 11, 'column': 21 } } }, 'loc': { 'start': { 'line': 11, 'column': 12 }, 'end': { 'line': 11, 'column': 21 } } }, 'loc': { 'start': { 'line': 11, 'column': 8 }, 'end': { 'line': 11, 'column': 21 } } }, 'loc': { 'start': { 'line': 11, 'column': 8 }, 'end': { 'line': 11, 'column': 22 } } } ], 'loc': { 'start': { 'line': 10, 'column': 11 }, 'end': { 'line': 12, 'column': 5 } } }, 'loc': { 'start': { 'line': 8, 'column': 11 }, 'end': { 'line': 12, 'column': 5 } } }, 'loc': { 'start': { 'line': 6, 'column': 4 }, 'end': { 'line': 12, 'column': 5 } } }, { 'type': 'ReturnStatement', 'argument': { 'type': 'Identifier', 'name': 'c', 'loc': { 'start': { 'line': 14, 'column': 11 }, 'end': { 'line': 14, 'column': 12 } } }, 'loc': { 'start': { 'line': 14, 'column': 4 }, 'end': { 'line': 14, 'column': 13 } } } ], 'loc': { 'start': { 'line': 1, 'column': 21 }, 'end': { 'line': 15, 'column': 1 } } }, 'generator': false, 'expression': false, 'async': false, 'loc': { 'start': { 'line': 1, 'column': 0 }, 'end': { 'line': 15, 'column': 1 } } } ], 'sourceType': 'script', 'loc': { 'start': { 'line': 1, 'column': 0 }, 'end': { 'line': 15, 'column': 1 } } };
+const nonSubstitutionParams = 'x=1;y=2;z=3';
+const nonSubstitutionValuedLines = [
+    {analyzedLine: {line: 1, type: 'FunctionDeclaration', name: 'foo', condition: '', value: ''},
+        value: 0},
+
+    {analyzedLine: {line: 2, type: 'VariableDeclarator', name: 'a', condition: '', value: '(x + 1)'},
+        value: 0},
+
+    {analyzedLine: {line: 3, type: 'VariableDeclarator', name: 'b', condition: '', value: '(a + y)'},
+        value: 0},
+
+    {analyzedLine: {line: 4, type: 'VariableDeclarator', name: 'c', condition: '', value: '0'},
+        value: 0},
+
+    {analyzedLine: {line: 6, type: 'IfStatement', name: '', condition: '(b < z)', value: ''},
+        value: false},
+
+    {analyzedLine: {line: 7, type: 'AssignmentExpression', name: 'c', condition: '', value: '(c + 5)'},
+        value: 0},
+
+    {analyzedLine: {line: -1, type: 'BlockClosing', name: '', condition: '', value: ''},
+        value: 0},
+
+    {analyzedLine: {line: -1, type: 'Else', name: '', condition: '', value: ''},
+        value: 0},
+
+    {analyzedLine: {line: 8, type: 'IfStatement', name: '', condition: '(b < (z * 2))', value: ''},
+        value: true},
+
+    {analyzedLine: {line: 9, type: 'AssignmentExpression', name: 'c', condition: '', value: '((c + x) + 5)'},
+        value: 0},
+
+    {analyzedLine: {line: -1, type: 'BlockClosing', name: '', condition: '', value: ''},
+        value: 0},
+
+    {analyzedLine: {line: -1, type: 'Else', name: '', condition: '', value: ''},
+        value: 0},
+
+    {analyzedLine: {line: 11, type: 'AssignmentExpression', name: 'c', condition: '', value: '((c + z) + 5)'},
+        value: 0},
+
+    {analyzedLine: {line: -1, type: 'BlockClosing', name: '', condition: '', value: ''},
+        value: 0},
+
+    {analyzedLine: {line: -1, type: 'BlockClosing', name: '', condition: '', value: ''},
+        value: 0},
+
+    {analyzedLine: {line: 14, type: 'ReturnStatement', name: '', condition: '', value: 'c'},
+        value: 0},
+
+    {analyzedLine: {line: -1, type: 'BlockClosing', name: '', condition: '', value: ''},
+        value: 0}
+];
+
+describe('Testing computation without substitution', function () {
+    it('should produce valued code without substitution', function () {
+        testWithoutSubstitution(nonSubstitutionProgram, nonSubstitutionParams, nonSubstitutionValuedLines);
     });
 });
