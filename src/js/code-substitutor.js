@@ -1,12 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Expression_Types_1 = require("./Expression-Types");
-var expression_analyzer_1 = require("./expression-analyzer");
-var code_analyzer_1 = require("./code-analyzer");
-;
-var isNumber = function (x) { return (typeof x) === "number"; };
-var isString = function (x) { return (typeof x) === "string"; };
-var isBoolean = function (x) { return (typeof x) === "boolean"; };
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+var Expression_Types_1 = require('./Expression-Types');
+var expression_analyzer_1 = require('./expression-analyzer');
+var code_analyzer_1 = require('./code-analyzer');
+
+var isNumber = function (x) { return (typeof x) === 'number'; };
+var isString = function (x) { return (typeof x) === 'string'; };
+var isBoolean = function (x) { return (typeof x) === 'boolean'; };
 exports.isVarParam = function (id, varTable, substitute) {
     //varTable.length == 0 ? false :
     return substitute ? (varTable[0].name == id.name ? varTable[0].isParam :
@@ -48,7 +48,7 @@ var getValueOfComputationExpression = function (comp, varTable) {
     return Expression_Types_1.isBinaryExpression(comp) ? getValueOfBinaryExpression(comp, varTable) :
         Expression_Types_1.isLogicalExpression(comp) ? getValueOfLogicalExpression(comp, varTable) :
             Expression_Types_1.isUnaryExpression(comp) ? getValueOfUnaryExpression(comp, varTable) :
-                "unsupported: update expression";
+                'unsupported: update expression';
 }; //getValueOfUpdateExpression(comp, varTable);
 var getValueOfConditionalExpression = function (cond, varTable) {
     return valueExpressionToValue(cond.test, varTable) ? valueExpressionToValue(cond.consequent, varTable) :
@@ -59,7 +59,7 @@ var getValOfMemberExpression = function (memberExpression, varTable) {
 };
 var computeMemberExpression = function (obj, property, varTable) {
     return isNumber(property) ? (Expression_Types_1.isArrayExpression(obj) ? valueExpressionToValue(obj.elements[property], varTable) : getValueOfArrIdentifier(obj, property, varTable)) :
-        "error: no property " + property + " in array";
+        'error: no property ' + property + ' in array';
 };
 var getValueOfArrIdentifier = function (obj, property, varTable) {
     return getElementOfArr(exports.getValueExpressionOfIdentifier(obj, varTable, true), property, varTable);
@@ -67,7 +67,7 @@ var getValueOfArrIdentifier = function (obj, property, varTable) {
 var getElementOfArr = function (arr, index, varTable) {
     return Expression_Types_1.isArrayExpression(arr) ? valueExpressionToValue(arr.elements[index], varTable) :
         Expression_Types_1.isIdentifier(arr) ? getValueOfArrIdentifier(arr, index, varTable) :
-            "error: not an array";
+            'error: not an array';
 };
 var getValueOfBinaryExpression = function (binaryExpression, varTable) {
     return performBinaryOp(valueExpressionToValue(binaryExpression.left, varTable), valueExpressionToValue(binaryExpression.right, varTable), binaryExpression.operator);
@@ -81,7 +81,7 @@ var performAddition = function (left, right) {
     return isNumber(left) && isNumber(right) ? left + right :
         isString(left) ? left + right :
             isString(right) ? left + right :
-                "undefined operation: " + left + " + " + right;
+                'undefined operation: ' + left + ' + ' + right;
 };
 var isNumericOp = function (op) {
     return ['-', '*', '/', '**'].indexOf(op) != -1;
@@ -110,7 +110,7 @@ var getValueOfLogicalExpression = function (logicalExpression, varTable) {
 };
 var computeLogicalOperation = function (left, right, op) {
     return isBoolean(left) && isBoolean(right) ? performLogicalOperation(left, right, op) :
-        "error: " + op + " is undefined on non-booleans";
+        'error: ' + op + ' is undefined on non-booleans';
 };
 var performLogicalOperation = function (left, right, op) {
     return op[0] === '&' ? left && right :
@@ -120,7 +120,7 @@ var getValueOfUnaryExpression = function (unaryExpression, varTable) {
     return performUnaryOp(valueExpressionToValue(unaryExpression.argument, varTable), unaryExpression.operator);
 };
 var performUnaryOp = function (val, op) {
-    return op === '!' ? (isBoolean(val) ? !val : "undefined operation: not on a non-boolean") :
+    return op === '!' ? (isBoolean(val) ? !val : 'undefined operation: not on a non-boolean') :
         op === '-' ? -val :
             val;
 };
@@ -134,7 +134,7 @@ var performUpdate = function (updateExpression, assignable, op, prefix, varTable
             updateVarTable(varTable, assignable, Expression_Types_1.createBinaryExpression(op[0], replaceVarInIdentifier(assignable, assignable, varTable), Expression_Types_1.createAtomicLiteralExpression(1), updateExpression.loc)); // Transform the update exp into a binary exp so it would not be calculated more than once
             return (prefix ? newValue : oldValue);
         }
-        return "error: cannot update a non numeric value: " + oldValue;
+        return 'error: cannot update a non numeric value: ' + oldValue;
     }
     else {
         var arr = assignable.object;
@@ -180,7 +180,7 @@ var doWhileEndLine = function (cond, value) { return ({
     value: value
 }); };
 var getElseLine = function () { return ({
-    analyzedLine: { line: -1, type: "Else", name: '', condition: '', value: '' },
+    analyzedLine: { line: -1, type: 'Else', name: '', condition: '', value: '' },
     value: 0
 }); };
 var copyArr = function (arr) { return JSON.parse(JSON.stringify(arr)); };

@@ -1,9 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var expression_analyzer_1 = require("./expression-analyzer");
-var code_substitutor_1 = require("./code-substitutor");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+var expression_analyzer_1 = require('./expression-analyzer');
+var code_substitutor_1 = require('./code-substitutor');
 var analyzedLineToHtml = function (line) {
-    return "<tr><td>" + line.line + "</td><td>" + line.type + "</td><td>" + line.name + "</td><td>" + line.condition + "</td><td>" + line.value + "</td></tr>";
+    return '<tr><td>' + line.line + '</td><td>' + line.type + '</td><td>' + line.name + '</td><td>' + line.condition + '</td><td>' + line.value + '</td></tr>';
 };
 var notAProgram = '<table><tr><td>Not a program!</td></tr>';
 var headers = '<tr><td>Line</td><td>Type</td><td>Name</td><td>Condition</td><td>Value</td></tr>';
@@ -17,7 +17,7 @@ var ident = 0;
 var tabLength = 4;
 var space = '&nbsp;';
 var generateIdenttation = function () {
-    var tab = "";
+    var tab = '';
     for (var i = 0; i < ident; i++) {
         tab += space;
     }
@@ -58,7 +58,7 @@ var valuedLinesIntoTable = function (lines, params) {
 };
 var valuedLineToHtml = function (line, params) {
     return (atomicTypes.indexOf(line.analyzedLine.type) != -1 ? valuedAtomicToHtml(line) :
-        generateIdenttation() + valuedCompoundToHtml(line, params)) + "<br/>";
+        generateIdenttation() + valuedCompoundToHtml(line, params)) + '<br/>';
 };
 var valuedAtomicToHtml = function (line) {
     return line.analyzedLine.type === 'VariableDeclarator' ? generateIdenttation() + valuedDeclarationToHtml(line) :
@@ -88,54 +88,54 @@ var valuedLoopToHtml = function (line) {
             valuedForLineToHtml(line);
 };
 var valuedDeclarationToHtml = function (line) {
-    return "let " + line.analyzedLine.name + " " + (line.value !== 'null' ? ' = ' + line.analyzedLine.value : '') + ";";
+    return 'let ' + line.analyzedLine.name + ' ' + (line.value !== 'null' ? ' = ' + line.analyzedLine.value : '') + ';';
 };
 var valuedAssignmentToHtml = function (line) {
-    return line.analyzedLine.name + " = " + line.analyzedLine.value + ";";
+    return line.analyzedLine.name + ' = ' + line.analyzedLine.value + ';';
 };
 var valuedReturnStatementToHtml = function (line) {
-    return "return " + line.analyzedLine.value + ";";
+    return 'return ' + line.analyzedLine.value + ';';
 };
 var valuedBreakToHtml = function () {
-    return "break;";
+    return 'break;';
 };
 var doWhileEndToHtml = function (line) {
-    var returnLine = generateIdenttation() + ("while (" + line.analyzedLine.condition + ");");
+    var returnLine = generateIdenttation() + ('while (' + line.analyzedLine.condition + ');');
     ident -= tabLength;
     return returnLine;
 };
 var elseToHtml = function () {
-    var returnLine = generateIdenttation() + "else {";
+    var returnLine = generateIdenttation() + 'else {';
     ident += tabLength;
     return returnLine;
 };
 var blockClosingToHtml = function () {
     ident -= tabLength;
-    return generateIdenttation() + "}";
+    return generateIdenttation() + '}';
 };
 var valuedFuncToHtml = function (line, params) {
     ident += tabLength;
-    return "function " + line.analyzedLine.name + "(" + params + ") {";
+    return 'function ' + line.analyzedLine.name + '(' + params + ') {';
 };
 var valuedIfToHtml = function (line) {
     ident += tabLength;
-    return markLine("if (" + line.analyzedLine.condition + ") {", line);
+    return markLine('if (' + line.analyzedLine.condition + ') {', line);
 };
 var valuedUpdateToHtml = function (line) {
-    return line.analyzedLine.value + ";";
+    return line.analyzedLine.value + ';';
 };
 var valuedWhileToHtml = function (line) {
     ident += tabLength;
-    return markLine("while (" + line.analyzedLine.condition + ") {", line);
+    return markLine('while (' + line.analyzedLine.condition + ') {', line);
 };
 var valuedDoWhileToHtml = function (line) {
     ident += tabLength;
-    return markLine("do (" + line.analyzedLine.condition + ") {", line);
+    return markLine('do (' + line.analyzedLine.condition + ') {', line);
 };
 var valuedForLineToHtml = function (line) {
     ident += tabLength;
-    return markLine("for (" + line.analyzedLine.condition + ") {", line);
+    return markLine('for (' + line.analyzedLine.condition + ') {', line);
 };
 var markLine = function (str, line) {
-    return "<mark style=\"background-color:" + (line.value ? "green" : "red") + "\">" + str + "</mark>";
+    return '<mark style=\'background-color:' + (line.value ? 'green' : 'red') + '\'>' + str + '</mark>';
 };

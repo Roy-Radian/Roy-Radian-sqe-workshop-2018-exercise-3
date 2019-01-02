@@ -26,14 +26,11 @@ $(document).ready(function () {
 
 function graphCode(res) {
     let codeToGraph = extractContent(res.valuedLines);
-
     let graphDiv = document.getElementById('graphit');
 
     const {createFlowTreeBuilder, createSVGRender} = js2flowchart;
-
     const flowTreeBuilder = createFlowTreeBuilder(),
         svgRender = createSVGRender();
-
     const flowTree = flowTreeBuilder.build(codeToGraph),
         shapesTree = svgRender.buildShapesTree(flowTree);
     let shapes = shapesTree.getShapes();
@@ -41,21 +38,11 @@ function graphCode(res) {
     shapes.forEach(function(shape) {
         shape.state.theme.fillColor = '#FFFFFF';
     });
-
     let counters = {atShape : 1, atCodeNode : 1};
-    showFlow(shapes, res.subProg, counters)
-
-
+    showFlow(shapes, res.subProg, counters);
     const svg = shapesTree.print();
 
     graphDiv.innerHTML = svg;
-}
-
-
-function getColorOfNode(type) {
-    return type === 'IfStatement' ? '#00FF00' :
-        type === 'ReturnStatement' ? '#ede7f6' :
-            '#ede7f6';
 }
 
 /**
@@ -66,45 +53,69 @@ function getColorOfNode(type) {
  */
 function showFlow(shapes, subProg, counters) {
     if (counters.atShape >= shapes.length - 1) return;
-    let type = subProg[counters.atCodeNode].analyzedLine.type;
+    handleLine(shapes, subProg, counters);
+    showFlow(shapes, subProg, counters);
+}
 
+function handleLine(shapes, subProg, counters) {
+    let type = subProg[counters.atCodeNode].analyzedLine.type;
     if (((type === 'IfStatement' || type === 'WhileStatement' || type == 'Else')
-            && subProg[counters.atCodeNode].value == false)) {
-        let endBlocks = 1;
-        replaceShapeColor(shapes[counters.atShape], '#00FF00');
-        if (type != 'Else') counters.atShape++;
-        //replaceShapeColor(shapes[counters.atShape], '#FFFFFF');
-        //  This is an if that shouldn't execute - skip it
-        counters.atCodeNode++;
-        while (counters.atShape < shapes.length - 1 && endBlocks > 0) {
-            replaceShapeColor(shapes[counters.atShape],'#FFFFFF');
-            if (subProg[counters.atCodeNode].analyzedLine.type === 'IfStatement') {
-                endBlocks++;
-                counters.atCodeNode++;
-                counters.atShape++;
-            } else if (subProg[counters.atCodeNode].analyzedLine.type === 'BlockClosing') {
-                endBlocks--;
-                counters.atCodeNode++;
-                // If this was the last close and the next Type is an Else - it should be executed
-                if (endBlocks == 0 && counters.atCodeNode < subProg.length - 1) subProg[counters.atCodeNode].value=true;
-            } else if (subProg[counters.atCodeNode].analyzedLine.type === 'Else') {
-                // If reached else - don't advance shape
-                counters.atCodeNode++;
-            } else {
-                counters.atCodeNode++;
-                counters.atShape++;
-            }
-        }
+        && subProg[counters.atCodeNode].value == false)) {
+        handleFalseCondition(shapes, subProg, counters, type);
     }
     else {
-        if (type == 'Else' || type == 'BlockClosing') counters.atCodeNode++;
-        else {
-            replaceShapeColor(shapes[counters.atShape], '#00FF00');
-            counters.atShape++;
-            counters.atCodeNode++;
-        }
+        handleEncounteredLines(shapes, subProg, counters, type);
     }
-    showFlow(shapes, subProg, counters);
+}
+
+function handleFalseCondition(shapes, subProg, counters, type) {
+    let endBlocks = 1;
+    replaceShapeColor(shapes[counters.atShape], '#00FF00');
+    if (type != 'Else') counters.atShape++;
+    replaceShapeColor(shapes[counters.atShape], '#FFFFFF');
+    //  This is an if that shouldn't execute - skip it
+    counters.atCodeNode++;
+    while (counters.atShape < shapes.length - 1 && endBlocks > 0) {
+        endBlocks = skipUnencounteredLine(shapes, subProg, counters, endBlocks);
+    }
+}
+
+function skipUnencounteredLine(shapes, subProg, counters, endBlocks) {
+    replaceShapeColor(shapes[counters.atShape],'#FFFFFF');
+    if (subProg[counters.atCodeNode].analyzedLine.type === 'IfStatement') {
+        endBlocks++;
+        counters.atCodeNode++;
+        counters.atShape++;
+    } else {
+        endBlocks = skipNonIfStatement(shapes, subProg, counters, endBlocks);
+    }
+    return endBlocks;
+}
+
+function skipNonIfStatement(shapes, subProg, counters, endBlocks) {
+    if (subProg[counters.atCodeNode].analyzedLine.type === 'BlockClosing') {
+        endBlocks--;
+        counters.atCodeNode++;
+        // If this was the last close and the next Type is an Else - it should be executed
+        if (endBlocks == 0 && counters.atCodeNode < subProg.length - 1) subProg[counters.atCodeNode].value=true;
+    } else if (subProg[counters.atCodeNode].analyzedLine.type === 'Else') {
+        // If reached else - don't advance shape
+        counters.atCodeNode++;
+    } else {
+        counters.atCodeNode++;
+        counters.atShape++;
+    }
+
+    return endBlocks;
+}
+
+function handleEncounteredLines(shapes, subProg, counters, type) {
+    if (type == 'Else' || type == 'BlockClosing') counters.atCodeNode++;
+    else {
+        replaceShapeColor(shapes[counters.atShape], '#00FF00');
+        counters.atShape++;
+        counters.atCodeNode++;
+    }
 }
 
 function replaceShapeColor(shape, color) {
@@ -130,4 +141,4 @@ function extractContent(html) {
     //parse html into text
     var dom = (new DOMParser()).parseFromString('<!doctype html><body>' + html, 'text/html');
     return dom.body.textContent;
-};
+}

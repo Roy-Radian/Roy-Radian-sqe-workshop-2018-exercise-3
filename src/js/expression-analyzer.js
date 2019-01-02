@@ -1,6 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-var Expression_Types_1 = require("./Expression-Types");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+var Expression_Types_1 = require('./Expression-Types');
 exports.isBinaryExpression = Expression_Types_1.isBinaryExpression;
 exports.isConditionalExpression = Expression_Types_1.isConditionalExpression;
 exports.isIdentifier = Expression_Types_1.isIdentifier;
@@ -9,7 +9,7 @@ exports.isMemberExpression = Expression_Types_1.isMemberExpression;
 exports.isUnaryExpression = Expression_Types_1.isUnaryExpression;
 exports.isUpdateExpression = Expression_Types_1.isUpdateExpression;
 exports.isProgram = Expression_Types_1.isProgram;
-var code_substitutor_1 = require("./code-substitutor");
+var code_substitutor_1 = require('./code-substitutor');
 var EMPTY = '';
 /*const expressionToAnalyzedLines = (exp: Expression): AnalyzedLine[] =>
     //isExpressionStatement(exp) ? expressionStatementToAnalyzedLines(exp) :
@@ -68,7 +68,7 @@ var getValOfComputationExpression = function (c, varTable) {
                 (c.prefix ? c.operator + exports.getValOfValExp(c.argument, varTable) : exports.getValOfValExp(c.argument, varTable) + c.operator);
 };
 var getValOfConditionalExpression = function (cond, varTable) {
-    return "(" + exports.getValOfValExp(cond.test, varTable) + " ? " + exports.getValOfValExp(cond.consequent, varTable) + " : " + exports.getValOfValExp(cond.alternate, varTable) + ")";
+    return '(' + exports.getValOfValExp(cond.test, varTable) + ' ? ' + exports.getValOfValExp(cond.consequent, varTable) + ' : ' + exports.getValOfValExp(cond.alternate, varTable) + ')';
 };
 var getValOfMemberExpression = function (m, varTable) {
     return m.computed ? exports.getValOfValExp(m.object, varTable) + '[' + exports.getValOfValExp(m.property, varTable) + ']' :
