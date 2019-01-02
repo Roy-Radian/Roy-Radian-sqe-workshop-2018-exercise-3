@@ -11,7 +11,6 @@ $(document).ready(function () {
         let params = $('#params').val();
 
         let res = constructSubstitution(parsedCode, params, false);
-        console.log(res.valuedLines);
         if (res.subProg != null) {
             graphCode(res);
         }
@@ -72,8 +71,9 @@ function showFlow(shapes, subProg, counters) {
     if (((type === 'IfStatement' || type === 'WhileStatement' || type == 'Else')
             && subProg[counters.atCodeNode].value == false)) {
         let endBlocks = 1;
+        replaceShapeColor(shapes[counters.atShape], '#00FF00');
         if (type != 'Else') counters.atShape++;
-        replaceShapeColor(shapes[counters.atShape], '#FFFFFF');
+        //replaceShapeColor(shapes[counters.atShape], '#FFFFFF');
         //  This is an if that shouldn't execute - skip it
         counters.atCodeNode++;
         while (counters.atShape < shapes.length - 1 && endBlocks > 0) {
@@ -87,6 +87,9 @@ function showFlow(shapes, subProg, counters) {
                 counters.atCodeNode++;
                 // If this was the last close and the next Type is an Else - it should be executed
                 if (endBlocks == 0 && counters.atCodeNode < subProg.length - 1) subProg[counters.atCodeNode].value=true;
+            } else if (subProg[counters.atCodeNode].analyzedLine.type === 'Else') {
+                // If reached else - don't advance shape
+                counters.atCodeNode++;
             } else {
                 counters.atCodeNode++;
                 counters.atShape++;
