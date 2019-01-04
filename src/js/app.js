@@ -22,7 +22,6 @@ $(document).ready(function () {
 
         //$('#substitutedCode').val(JSON.stringify(parsedCode, null, 2)); // Show parsed code
         document.getElementById('substitutedCode').innerHTML = res.valuedLines; // constructSubstitution(parsedCode, params);
-
         document.getElementById('tblDiv').innerHTML = constructTable(parsedCode);
     });
 });
@@ -101,16 +100,22 @@ function skipNonIfStatement(shapes, subProg, counters, endBlocks) {
         endBlocks--;
         counters.atCodeNode++;
         // If this was the last close and the next Type is an Else - it should be executed
-        if (endBlocks == 0 && counters.atCodeNode < subProg.length - 1) subProg[counters.atCodeNode].value=true;
+        markElseAsTrue(shapes, subProg, counters, endBlocks);
     } else if (subProg[counters.atCodeNode].analyzedLine.type === 'Else') {
         // If reached else - don't advance shape
         counters.atCodeNode++;
+        endBlocks++;
     } else {
         counters.atCodeNode++;
         counters.atShape++;
     }
 
     return endBlocks;
+}
+
+function markElseAsTrue(shapes, subProg, counters, endBlocks) {
+    if (endBlocks == 0 && counters.atCodeNode < subProg.length - 1 &&
+        subProg[counters.atCodeNode].analyzedLine.type === 'Else') subProg[counters.atCodeNode].value=true;
 }
 
 function handleEncounteredLines(shapes, subProg, counters, type) {
