@@ -4,8 +4,11 @@ import {constructTable, constructSubstitution} from './html-visualisation';
 //import {parseParams, valueExpressionToValue} from './code-substitutor'; // To test value calculations
 import * as js2flowchart from 'js2flowchart';
 
+let shouldTerminate = false;
+
 $(document).ready(function () {
     $('#codeSubmissionButton').click(() => {
+        shouldTerminate = false;
         let codeToParse = $('#codePlaceholder').val();
         let parsedCode = parseCode(codeToParse);
         let params = $('#params').val();
@@ -54,12 +57,13 @@ function graphCode(res) {
 function showFlow(shapes, subProg, counters) {
     if (counters.atShape >= shapes.length - 1) return;
     handleLine(shapes, subProg, counters);
-    showFlow(shapes, subProg, counters);
+    if (!shouldTerminate)
+        showFlow(shapes, subProg, counters);
 }
 
 function handleLine(shapes, subProg, counters) {
     let type = subProg[counters.atCodeNode].analyzedLine.type;
-    if (((type === 'IfStatement' || type === 'WhileStatement' || type == 'Else')
+    if (((type === 'IfStatement' || type === 'WhileStatement' || type === 'Else')
         && subProg[counters.atCodeNode].value == false)) {
         handleFalseCondition(shapes, subProg, counters, type);
     }
@@ -71,7 +75,7 @@ function handleLine(shapes, subProg, counters) {
 function handleFalseCondition(shapes, subProg, counters, type) {
     let endBlocks = 1;
     replaceShapeColor(shapes[counters.atShape], '#00FF00');
-    if (type != 'Else') counters.atShape++;
+    if (type !== 'Else') counters.atShape++;
     replaceShapeColor(shapes[counters.atShape], '#FFFFFF');
     //  This is an if that shouldn't execute - skip it
     counters.atCodeNode++;
@@ -82,7 +86,7 @@ function handleFalseCondition(shapes, subProg, counters, type) {
 
 function skipUnencounteredLine(shapes, subProg, counters, endBlocks) {
     replaceShapeColor(shapes[counters.atShape],'#FFFFFF');
-    if (subProg[counters.atCodeNode].analyzedLine.type === 'IfStatement') {
+    if (subProg[counters.atCodeNode].analyzedLine.type === 'IfStatement' || subProg[counters.atCodeNode].analyzedLine.type === 'WhileStatement') {
         endBlocks++;
         counters.atCodeNode++;
         counters.atShape++;
@@ -110,11 +114,13 @@ function skipNonIfStatement(shapes, subProg, counters, endBlocks) {
 }
 
 function handleEncounteredLines(shapes, subProg, counters, type) {
-    if (type == 'Else' || type == 'BlockClosing') counters.atCodeNode++;
+    if (type === 'Else' || type === 'BlockClosing') counters.atCodeNode++;
     else {
         replaceShapeColor(shapes[counters.atShape], '#00FF00');
         counters.atShape++;
         counters.atCodeNode++;
+        if (type === 'ReturnStatement')
+            shouldTerminate = true;
     }
 }
 
