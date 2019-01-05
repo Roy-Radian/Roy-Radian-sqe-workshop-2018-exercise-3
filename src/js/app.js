@@ -40,7 +40,7 @@ function graphCode(res) {
     shapes.forEach(function(shape) {
         shape.state.theme.fillColor = '#FFFFFF';
     });
-    let counters = {atShape : 1, atCodeNode : 1};
+    let counters = {atShape : 0, atCodeNode : 0};
     showFlow(shapes, res.subProg, counters);
     const svg = shapesTree.print();
 
@@ -54,7 +54,7 @@ function graphCode(res) {
  * @param subProg - the code with ifStatement execution flag
  */
 function showFlow(shapes, subProg, counters) {
-    if (counters.atShape >= shapes.length - 1) return;
+    if (counters.atShape >= shapes.length) return;
     handleLine(shapes, subProg, counters);
     if (!shouldTerminate)
         showFlow(shapes, subProg, counters);
