@@ -29,21 +29,20 @@ $(document).ready(function () {
 function graphCode(res) {
     let codeToGraph = extractContent(res.valuedLines);
     let graphDiv = document.getElementById('graphit');
-
     const {createFlowTreeBuilder, createSVGRender} = js2flowchart;
     const flowTreeBuilder = createFlowTreeBuilder(),
         svgRender = createSVGRender();
     const flowTree = flowTreeBuilder.build(codeToGraph),
         shapesTree = svgRender.buildShapesTree(flowTree);
     let shapes = shapesTree.getShapes();
-
     shapes.forEach(function(shape) {
         shape.state.theme.fillColor = '#FFFFFF';
     });
     let counters = {atShape : 0, atCodeNode : 0};
     showFlow(shapes, res.subProg, counters);
+    //for (let i = 0; i < shapes.length - 1; i++)
+    //    shapes[i].state.nameParts = ['(' + i + ') ' + shapes[i].state.name];
     const svg = shapesTree.print();
-
     graphDiv.innerHTML = svg;
 }
 
