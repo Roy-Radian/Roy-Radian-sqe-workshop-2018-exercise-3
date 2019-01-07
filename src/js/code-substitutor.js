@@ -244,7 +244,7 @@ var substituteValueExpression = function (exp, varTable, substitute) {
     var lines = [analyzedLineToValuedLine(exp, 0, varTable, substitute)];
     if (Expression_Types_1.isUpdateExpression(exp)) {
         performUpdate(exp, exp.argument, exp.operator, exp.prefix, varTable);
-        if (isAssignableParam(exp.argument, varTable, substitute))
+        if (isAssignableParam(exp.argument, varTable, substitute) || !substitute)
             return lines;
     }
     return NO_LINES;

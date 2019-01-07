@@ -328,7 +328,7 @@ const substituteValueExpression = (exp: ValueExpression, varTable: VarTuple[], s
     let lines = [analyzedLineToValuedLine(exp, 0, varTable, substitute)];
     if (isUpdateExpression(exp)) {
         performUpdate(exp, exp.argument, exp.operator, exp.prefix, varTable);
-        if (isAssignableParam(exp.argument, varTable, substitute))
+        if (isAssignableParam(exp.argument, varTable, substitute) || !substitute)
             return lines;
     }
     return NO_LINES;
